@@ -1,0 +1,21 @@
+{
+  "code":"0",
+  "job":[
+    {
+      "title":"前端高级工程师",
+      "desc":"<li>前端开发及维护工作；</li><li>有良好的技术基础，熟悉 Web 标准，熟练掌握多种 Web 前端技术；</li><li>掌握行业内流行的类库；</li>"
+    },
+    {
+      "title":"JAVA高级工程师",
+      "desc":"<li>后端开发及维护工作；</li><li>有良好的技术基础；</li>"
+    }
+  ],
+  "cour":[
+    {
+      "imageUrl":"http://m.360buyimg.com/mobilecms/jfs/t29764/96/1445775266/14886/af4475b4/5ce0e58fN6cf2c8b0.png",
+      "imageLocal":"static/images/cour2.png",
+      "time":"2019 年 05 月",
+      "desc":""
+    }
+  ]
+}

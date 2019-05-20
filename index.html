@@ -6,8 +6,188 @@
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>首页</title>
+    <link rel="stylesheet" href="http://layui.hcwl520.com.cn/layui-v2.4.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="static/css/busi/app.css" media="all">
+    <!-- 让IE8/9支持媒体查询,从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
-首页
+<!-- nav部分 -->
+<div class="nav index" style="background: #fff;opacity:0.6">
+    <div class="layui-container">
+        <!-- 公司logo -->
+        <div class="nav-logo">
+            <a href="index.html">
+                <img src="" alt="">
+            </a>
+        </div>
+        <div class="nav-list">
+            <button>
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="layui-nav" lay-filter="">
+                <li class="layui-nav-item"><a href="index.html">首页</a></li>
+                <li class="layui-nav-item"><a href="case.html">案例</a></li>
+                <li class="layui-nav-item"><a href="about.html">关于</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- banner部分 -->
+<div class="layui-carousel" id="banner"></div>
+
+<!-- product部分 -->
+<div class="main-product">
+    <div class="layui-container">
+        <p class="title">专注于中小客户<span>解决方案</span></p>
+        <div class="layui-row layui-col-space25" id="product"></div>
+    </div>
+</div>
+
+<!-- service部分 -->
+<div class="main-service" >
+    <div class="layui-container">
+        <p class="title">为客户打造完美的<span>专业服务</span></p>
+        <div class="layui-row layui-col-space25 layui-col-space80" id="service"></div>
+        <div class="service-more" style="padding-top: 0;"></div>
+        <!--<div class="service-more"><a href="">查看更多</a></div>-->
+    </div>
+</div>
+
+<script src="http://layui.hcwl520.com.cn/layui-v2.4.5/layui.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+    layui.config({
+        base: 'static/js/busi/layui/'
+    }).use(['jquery', 'carousel', 'laytpl', 'firm'], function () {
+        var $ = layui.jquery
+            , carousel = layui.carousel
+            , laytpl = layui.laytpl;
+
+        //图片轮播
+        var ins = carousel.render({
+            elem: '#banner'
+            , width: '100%'
+            , height: '600px'
+            , arrow: 'always' //始终显示箭头
+            , interval: 3000 //自动切换的时间间隔,单位ms
+        });
+
+        $.ajax({
+            url: 'static/mockjson/index.json',
+            //在发送请求之前调用
+            beforeSend: function (request) {
+                request.setRequestHeader('IsAjax', 'true');
+            },
+            dataType: 'json',
+            method: 'GET',
+            data: {},
+            error: function (xhr, err, msg) {
+                layer.msg('请求失败');
+            },
+            success: function (res) {
+                if (res.code == '0') {
+                    var getBannerTpl = bannerTpl.innerHTML
+                        , bannerView = document.getElementById('banner');
+                    laytpl(getBannerTpl).render(res, function (html) {
+                        bannerView.innerHTML = html;
+                        ins.reload();
+                    });
+
+                    var getProductTpl = productTpl.innerHTML
+                        , productView = document.getElementById('product');
+                    laytpl(getProductTpl).render(res, function (html) {
+                        productView.innerHTML = html;
+                    });
+
+                    var getServiceTpl = serviceTpl.innerHTML
+                        , serviceView = document.getElementById('service');
+                    laytpl(getServiceTpl).render(res, function (html) {
+                        serviceView.innerHTML = html;
+                    });
+                }
+            },
+            //请求完成后回调函数(请求成功或失败之后均调用)
+            complete: function (xhr, statusCode) {
+            }
+        });
+    });
+</script>
+
+<script type="text/html" id="bannerTpl">
+    <div carousel-item>
+        {{# layui.each(d.banner, function(index, item){ }}
+        <div style="background:#fff url('{{ item.imageUrl }}') center repeat;">
+            <div style="margin-top:200px;">
+                <div class="banner_big_title">{{ item.title }}</div>
+                <div class="banner_desc_text">{{ item.desc }}</div>
+            </div>
+        </div>
+        {{# }); }}
+    </div>
+</script>
+
+<script type="text/html" id="productTpl">
+    {{# layui.each(d.product, function(index, item){ }}
+    <div class="layui-col-sm6 layui-col-md3">
+        <div class="content"
+            {{# if(item.linkUrl == undefined || item.linkUrl == ''){ }}
+                style="padding-bottom: 30px"
+            {{# } }} >
+            <div><img src="{{ item.iconUrl }}"></div>
+            <div>
+                <p class="label">{{ item.title }}</p>
+                <p>{{ item.desc }}</p>
+            </div>
+            {{# if(item.linkUrl == undefined || item.linkUrl == ''){ }}
+            {{# } else { }}
+            <a href="{{ item.linkUrl }}">详情 ></a>
+            {{# } }}
+        </div>
+    </div>
+    {{# }); }}
+</script>
+
+<script type="text/html" id="serviceTpl">
+    {{# layui.each(d.service, function(index, item){ }}
+    <div class="layui-col-sm6">
+        <div class="content">
+            <div class="content-left">
+                <img src="{{ item.imageUrl }}">
+            </div>
+            <div class="content-right">
+                <p class="label">{{ item.title }}</p>
+                <span></span>
+                <p>{{ item.desc }}</p>
+            </div>
+        </div>
+    </div>
+    {{# }); }}
+</script>
+
+<!-- footer部分 -->
+<div class="footer">
+    <div class="layui-container">
+        <p class="footer-web">
+            <b>友情链接：</b>
+            <a href=""></a>
+            <a href=""></a>
+        </p>
+        <div class="layui-row footer-contact">
+            <div class="layui-col-sm12 layui-col-lg12">
+                <div class="layui-row">
+                    <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
+                        <p class="contact-bottom">Copyright&nbsp;©&nbsp;2019&nbsp;17550.net.&nbsp;All rights reserved.&nbsp;
+                            |&nbsp;&nbsp;本站部分图片来自&nbsp;<a href="http://www.ssyer.com" target="_blank">沙沙野</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

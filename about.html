@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>首页</title>
+    <link rel="stylesheet" href="http://layui.hcwl520.com.cn/layui-v2.4.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="static/css/busi/app.css" media="all">
+    <!-- 让IE8/9支持媒体查询,从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!-- nav部分 -->
+<div class="nav">
+    <div class="layui-container">
+        <!-- 公司logo -->
+        <div class="nav-logo">
+            <a href="index.html">
+                <img src="" alt="">
+            </a>
+        </div>
+        <div class="nav-list">
+            <button>
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="layui-nav" lay-filter="">
+                <li class="layui-nav-item"><a href="index.html">首页</a></li>
+                <li class="layui-nav-item"><a href="case.html">案例</a></li>
+                <li class="layui-nav-item"><a href="about.html">关于</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- banner部分 -->
+<div class="banner about">
+    <div class="title">
+        <p>关于我们</p>
+        <p class="en">About Us</p>
+    </div>
+</div>
+
+<!-- main部分 -->
+<div class="main-about">
+    <div class="layui-container">
+        <div class="layui-row">
+            <ul class="aboutab">
+                <li class="layui-this">简介</li><li>招贤纳士</li><li>发展历程</li>
+            </ul>
+            <!-- 简介 -->
+            <div class="tabIntro">
+                <div class="content">
+                    <div class="layui-inline img"><img src="static/images/intro1.jpg"></div><div class="layui-inline panel">
+                        <p>我们一直致力于核心软件的自主研发，并以此面向客户需求进行定制化方案及服务。<br/>
+                            <br/>
+                            我们注重产品质量和优质服务，本着“创新为本，进取为怀”的核心价值观进行产品和市场的开拓。<br/>
+                            <br/>
+                            <!-- 联系方式：-->
+                        </p>
+                    </div>
+                </div>
+                <!--
+                <div class="content">
+                    <div class="layui-inline panel p_block">
+                        <p>描述</p>
+                    </div><div class="layui-inline img"><img src="static/images/bitmap/bitmap_600x600.png"></div>
+                    <p class="p_hidden">描述</p>
+                </div>
+                <div class="content">
+                    <div class="layui-inline img"><img src="static/images/bitmap/bitmap_600x600.png"></div><div class="layui-inline panel">
+                    <p>描述</p>
+                </div>
+                </div>-->
+            </div>
+            <!-- 招贤纳士 -->
+            <div class="tabJob" id="job"></div>
+            <!-- 发展历程 -->
+            <div class="tabCour" id="cour"></div>
+        </div>
+    </div>
+</div>
+
+<script src="http://layui.hcwl520.com.cn/layui-v2.4.5/layui.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+    layui.config({
+        base: 'static/js/busi/layui/'
+    }).use(['jquery', 'laytpl', 'firm'], function () {
+        var $ = layui.jquery
+            , laytpl = layui.laytpl;
+
+        $.ajax({
+            url: 'static/mockjson/about.json',
+            //在发送请求之前调用
+            beforeSend: function (request) {
+                request.setRequestHeader('IsAjax', 'true');
+            },
+            dataType: 'json',
+            method: 'GET',
+            data: {},
+            error: function (xhr, err, msg) {
+                layer.msg('请求失败');
+            },
+            success: function (res) {
+                if (res.code == '0') {
+                    var getJobTpl = jobTpl.innerHTML
+                        , jobView = document.getElementById('job');
+                    laytpl(getJobTpl).render(res, function (html) {
+                        //jobView.innerHTML = html;
+                    });
+
+                    var getCourTpl = courTpl.innerHTML
+                        , courView = document.getElementById('cour');
+                    laytpl(getCourTpl).render(res, function (html) {
+                        courView.innerHTML = html;
+                    });
+                }
+            },
+            //请求完成后回调函数(请求成功或失败之后均调用)
+            complete: function (xhr, statusCode) {
+            }
+        });
+    });
+</script>
+
+<script type="text/html" id="jobTpl">
+    {{# layui.each(d.job, function(index, item){ }}
+    <div class="content">
+        <p class="title">{{ item.title }}</p>
+        <p>> 职位描述</p>
+        <ol>
+            {{ item.desc }}
+        </ol>
+    </div>
+    {{# }); }}
+</script>
+
+<script type="text/html" id="courTpl">
+    <!--<p class="title">我们的蜕变</p>-->
+    <ul class="timeline">
+        {{# layui.each(d.cour, function(index, item){ }}
+        <li class="odd">
+            <div class="cour-img"><img src="{{ item.imageUrl }}"></div>
+            <div class="cour-panel layui-col-sm4
+                {{# if(index % 2 == '0'){ }}
+                    layui-col-sm-offset8 layui-col-lg5 layui-col-lg-offset7
+                {{# } else if(index % 2 == '1'){ }}
+                    layui-col-lg5
+                {{# } }} ">
+                <p class="label">{{ item.time }}</p>
+                <p>{{ item.desc }}</p>
+            </div>
+        </li>
+        {{# }); }}
+        <li class="odd">
+            <div class="cour-img"><img src="static/images/cour1.png"></div>
+        </li>
+    </ul>
+</script>
+
+<!-- footer部分 -->
+<div class="footer">
+    <div class="layui-container">
+        <p class="footer-web">
+            <b>友情链接：</b>
+            <a href=""></a>
+            <a href=""></a>
+        </p>
+        <div class="layui-row footer-contact">
+            <div class="layui-col-sm12 layui-col-lg12">
+                <div class="layui-row">
+                    <div class="layui-col-sm12 layui-col-md12 layui-col-lg12">
+                        <p class="contact-bottom">Copyright&nbsp;©&nbsp;2019&nbsp;17550.net.&nbsp;All rights reserved.&nbsp;
+                            |&nbsp;&nbsp;本站部分图片来自&nbsp;<a href="http://www.ssyer.com" target="_blank">沙沙野</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
